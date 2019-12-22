@@ -9,6 +9,7 @@ import javafx.scene.text.Font;
 
 import static sample.Food.*;
 import static sample.Main.*;
+import static sample.Snake.addBeginSnake;
 import static sample.Snake.snake;
 
 
@@ -51,6 +52,7 @@ public class Game {
 
 
     public static void tick(GraphicsContext gc)  {
+
         if (gameOver) {
             gc.setFill(Color.RED);
             gc.setFont(new Font("", 50));
@@ -98,6 +100,7 @@ public class Game {
             newFood();
         }
 
+
         // background
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, width * cornersize, height * cornersize);
@@ -105,7 +108,7 @@ public class Game {
         // score
         gc.setFill(Color.BLACK);
         gc.setFont(new Font("", 30));
-        gc.fillText("Score: " + (speed - 6), 10, 30);
+        gc.fillText("Score: " + (speed - 5), 10, 30);
 
         // random foodcolor
         Color cc = Color.PINK;

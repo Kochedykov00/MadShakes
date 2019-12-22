@@ -31,5 +31,10 @@ public class Snake {
         snake.add(new Corner(width / 2, height / 2));
 
     }
+
+    static void deleteSnake() {
+        snake.clear();
+        }
 }
+
 
