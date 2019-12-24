@@ -1,19 +1,24 @@
 package sample;
 
+import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
 import static sample.Food.*;
 import static sample.Main.*;
-import static sample.Snake.addBeginSnake;
 import static sample.Snake.snake;
 
 
-public class Game {
+public class Game extends Pane {
 
     static boolean gameOver = false;
 
@@ -23,9 +28,14 @@ public class Game {
 
 
 
+
+
     public enum Dir {
         left, right, up, down, update
     }
+
+
+
 
 
 
@@ -51,12 +61,12 @@ public class Game {
     }
 
 
+
+
     public static void tick(GraphicsContext gc)  {
 
         if (gameOver) {
-            gc.setFill(Color.RED);
-            gc.setFont(new Font("", 50));
-            gc.fillText("GAME OVER", 100, 250);
+            setGameOverScene();
             return;
         }
 
@@ -95,10 +105,14 @@ public class Game {
                 break;
         }
 
-        if (foodX == snake.get(0).x && foodY == snake.get(0).y) {
-            snake.add(new Snake.Corner(-1, -1));
-            newFood();
+
+
+        /*for (int i = 1; i < snake.size(); i++) {
+            if (snake.get(i).x == snake.get(0).x && snake.get(i).y == snake.get(0).y) {
+                gameOver = true;
+            }
         }
+        */
 
 
         // background
@@ -111,27 +125,12 @@ public class Game {
         gc.fillText("Score: " + (speed - 5), 10, 30);
 
         // random foodcolor
-        Color cc = Color.PINK;
+        //Color cc = Color.PINK;
 
-        switch (foodcolor) {
-            case 0:
-                cc = Color.PURPLE;
-                break;
-            case 1:
-                cc = Color.LIGHTBLUE;
-                break;
-            case 2:
-                cc = Color.YELLOW;
-                break;
-            case 3:
-                cc = Color.PINK;
-                break;
-            case 4:
-                cc = Color.ORANGE;
-                break;
-        }
-        gc.setFill(cc);
-        gc.fillOval(foodX * cornersize, foodY * cornersize, cornersize, cornersize);
+
+
+        //gc.setFill(cc);
+        //gc.fillOval(foodX * cornersize, foodY * cornersize, cornersize, cornersize);
 
         // snake
         for (Snake.Corner c : snake) {
@@ -140,6 +139,16 @@ public class Game {
             gc.setFill(Color.GREEN);
             gc.fillRect(c.x * cornersize, c.y * cornersize, cornersize - 2, cornersize - 2);
 
+        }
+
+    }
+
+    static void check (Pane pane, Food food) {
+        //System.out.println(snake.get(0).x);
+        //System.out.println(snake.get(0).y);
+        if (foodX == snake.get(0).x && foodY == snake.get(0).y) {
+            snake.add(new Snake.Corner(-1, -1));
+            newFood(food, pane);
         }
 
     }

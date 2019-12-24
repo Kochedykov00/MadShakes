@@ -3,20 +3,25 @@ package sample;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 
-import static sample.Food.newFood;
-import static sample.Food.speed;
-import static sample.Game.takeControl;
-import static sample.Game.tick;
-import static sample.Main.setStartScene;
-import static sample.Main.width;
+import static sample.Food.*;
+import static sample.Game.*;
+import static sample.Main.*;
+import static sample.Main.cornersize;
 import static sample.Snake.addBeginSnake;
 import static sample.Snake.deleteSnake;
 
@@ -25,12 +30,20 @@ public class GameController {
     static int width = 20;
     static int height = 20;
     static int cornersize = 25;
-    GraphicsContext graphicsContext;
-    private AnimationTimer timer;
+    private static AnimationTimer timer;
+
 
     private Pane gameRoot;
     private Scene gameScene;
-    Main main = new Main();
+
+    Food food;
+
+
+
+
+
+
+
 
 
 
@@ -39,55 +52,89 @@ public class GameController {
         this.gameScene = gameScene;
     }
 
-
-    public void startGame() {
-
-        gameRoot.setPrefSize(width * cornersize, height * cornersize);
-        Canvas c = new Canvas(width * cornersize, height * cornersize);
-        GraphicsContext gc = c.getGraphicsContext2D();
-        gameRoot.getChildren().addAll(c);
-        addBeginSnake();
-
-
-        timer = new AnimationTimer() {
-            long lastTick = 0;
-
-            @Override
-            public void handle(long now) {
-                if (lastTick == 0) {
-                    lastTick = now;
-                    tick(gc);
-                }
-
-                if (now - lastTick > 1000000000 / speed) {
-                    lastTick = now;
-                    tick(gc);
-                }
-
-
-            }
-
-        };
-        timer.start();
-
-
-        takeControl(gameScene);
-
-
+    public GameController(Pane gameRoot, Scene gameScene, Food food) {
+        this.gameRoot = gameRoot;
+        this.gameScene = gameScene;
+        this.food = food;
     }
 
 
 
-    public void gameOver() throws NullPointerException  {
+
+    public void startGame() {
+
+            gameRoot.setPrefSize(width * cornersize , height * cornersize);
+            Canvas c = new Canvas(width * cornersize , height * cornersize );
+            GraphicsContext gc = c.getGraphicsContext2D();
+            gameRoot.getChildren().addAll(c);
+            addBeginSnake();
+
+        //food.moveX(365);
+        //food.moveY(365);
+
+
+
+        food.setTranslateY(foodY * 24);
+        food.setTranslateX(foodX * 24);
+
+
+        gameRoot.getChildren().addAll(food);
+
+
+
+
+
+
+            timer = new AnimationTimer() {
+                long lastTick = 0;
+
+
+
+                @Override
+                public void handle(long now) {
+                    if (lastTick == 0) {
+                        lastTick = now;
+                        tick(gc);
+                        check(gameRoot, food);
+                    }
+
+                    if (now - lastTick > 1000000000 / speed) {
+                        lastTick = now;
+                        tick(gc);
+                        check(gameRoot, food);
+                    }
+
+
+
+
+                }
+
+
+            };
+            timer.start();
+
+
+            takeControl(gameScene);
+
+        food.animation.play();
+
+        }
+
+
+    public void gameOver() throws NullPointerException {
 
         timer.stop();
         deleteSnake();
+        breakFood();
         setStartScene();
 
         gameRoot.getChildren().removeAll();
 
     }
 }
+
+
+
 
 
 

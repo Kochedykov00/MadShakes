@@ -22,6 +22,18 @@ public class Snake {
 
     }
 
+    public int headSnakeOfx () {
+        return snake.get(0).x;
+    }
+
+    public int headSnakeOfy () {
+        return snake.get(0).y;
+    }
+
+
+
+
+
 
     static void addBeginSnake() {
 
