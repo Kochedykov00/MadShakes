@@ -100,7 +100,7 @@ public class Main extends Application {
             @Override
             public void handle(ActionEvent event) {
 
-                gameController.gameOver();
+                setGameOverScene();
             }
         });
         gameRoot.getChildren().addAll(but);
@@ -114,7 +114,8 @@ public class Main extends Application {
     public static void setGameOverScene() {
         Pane gameOverRoot = new Pane();
         Scene gameOverScene = new Scene(gameOverRoot, width * cornersize, height * cornersize);
-        GameController gameController = new GameController(gameOverRoot, gameOverScene);
+        //GameController gameController = new GameController(gameOverRoot, gameOverScene);
+        //gameController.gameOver();
 
         Button but = new Button();
         but.setText("begin again ");
@@ -124,7 +125,7 @@ public class Main extends Application {
         but.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                gameController.startGame();
+                setStartScene();
 
             }
         });

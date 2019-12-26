@@ -107,20 +107,20 @@ public class Game extends Pane {
 
 
 
-        /*for (int i = 1; i < snake.size(); i++) {
+        for (int i = 1; i < snake.size(); i++) {
             if (snake.get(i).x == snake.get(0).x && snake.get(i).y == snake.get(0).y) {
                 gameOver = true;
             }
         }
-        */
+
 
 
         // background
-        gc.setFill(Color.WHITE);
+        gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, width * cornersize, height * cornersize);
 
         // score
-        gc.setFill(Color.BLACK);
+        gc.setFill(Color.WHITE);
         gc.setFont(new Font("", 30));
         gc.fillText("Score: " + (speed - 5), 10, 30);
 

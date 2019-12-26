@@ -34,7 +34,7 @@ public class Food extends Pane {
     static int speed = 5;
     static Random rand = new Random();
     private ImageView body;
-    private Image squirrelImage = new Image("sample/img/сoins.png");
+    private Image squirrelImage = new Image("sample/img/squirrel.png");
     Animation animation;
 
     public Food() {
