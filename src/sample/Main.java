@@ -2,31 +2,20 @@ package sample;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.io.DataOutputStream;
+
 import java.io.IOException;
 import java.net.Socket;
 
-import static sample.Food.*;
+
 
 
 public class Main extends Application {
@@ -40,7 +29,7 @@ public class Main extends Application {
 
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
 
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -65,9 +54,9 @@ public class Main extends Application {
         GraphicsContext gc = c.getGraphicsContext2D();
 
         TextField ipTextField = new TextField();
-        ipTextField.setText("here's ip");
-        ipTextField.setTranslateX((float) (width * cornersize / 2) - 45 );
-        ipTextField.setTranslateY((float) (height * cornersize / 2) + 45 );
+        ipTextField.setText("127.0.0.0");
+        ipTextField.setTranslateX((float) (width * cornersize / 2) - 45);
+        ipTextField.setTranslateY((float) (height * cornersize / 2) + 45);
 
         startRoot.getChildren().addAll(ipTextField);
 
@@ -77,11 +66,13 @@ public class Main extends Application {
         button.setTranslateX((float) width * cornersize / 2);
         button.setTranslateY((float) height * cornersize / 2);
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+        System.out.println(ipTextField.getText());
 
+        button.setOnAction(event -> {
+            try {
                 setGameScene(ipTextField.getText());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
         startRoot.getChildren().addAll(button);
@@ -89,7 +80,7 @@ public class Main extends Application {
     }
 
 
-    public static void setGameScene(String ip) {
+    public static void setGameScene(String ip) throws IOException {
 
         Pane gameRoot = new Pane();
         Scene gameScene = new Scene(gameRoot, width * cornersize, height * cornersize);
@@ -97,23 +88,16 @@ public class Main extends Application {
         Food food = new Food();
 
         Client client = new Client(ip);
-        try {
-            Socket socket = client.connectingWithServer();
-            //DataOutputStream dataOutputStream = socket.getOutputStream();
-            //dataOutputStream.write(1);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        Socket socket = client.connectingWithServer();
+        System.out.println(client.getId());
+
+        //DataOutputStream dataOutputStream = socket.getOutputStream();
+        //dataOutputStream.write(1);
 
 
-
-
-
-
-        GameController gameController = new GameController(gameRoot, gameScene, food);
+        GameController gameController = new GameController(gameRoot, gameScene, food, socket, client.getId());
         gameController.startGame();
-
 
 
         Button but = new Button();
@@ -121,18 +105,15 @@ public class Main extends Application {
         but.setTranslateX(width * cornersize - 120);
         but.setTranslateY(0);
 
-        but.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-
+        but.setOnAction(event -> {
                 setGameOverScene();
-            }
+
+
         });
         gameRoot.getChildren().addAll(but);
         stage.setScene(gameScene);
         stage.setTitle("Моя семестровка");
         stage.show();
-
     }
 
 
@@ -147,12 +128,8 @@ public class Main extends Application {
         but.setTranslateX(width * cornersize / 2);
         but.setTranslateY(width * cornersize / 2);
 
-        but.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                setStartScene();
+        but.setOnAction(event -> {
 
-            }
         });
 
 
@@ -161,7 +138,8 @@ public class Main extends Application {
         gameOverController.gameOver();
         gameOverRoot.setPrefSize(width * cornersize, height * cornersize);
         gameOverRoot.getChildren().addAll(but);
-        stage.setScene(gameOverScene);stage.setTitle("Моя семестровка");
+        stage.setScene(gameOverScene);
+        stage.setTitle("Моя семестровка");
         stage.show();
 
     }
@@ -171,4 +149,6 @@ public class Main extends Application {
         launch(args);
     }
 }
+
+
 

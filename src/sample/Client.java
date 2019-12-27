@@ -25,7 +25,7 @@ public class Client {
         String message = dataInputStream.readUTF();
         this.id = Integer.parseInt(message);
 
-        while (!message.equals("2")) {
+        while (!message.equals("1")) {
             message = dataInputStream.readUTF();
         }
 

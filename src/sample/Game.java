@@ -13,6 +13,8 @@ import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 
+import java.io.IOException;
+
 import static sample.Food.*;
 import static sample.Main.*;
 import static sample.Snake.snake;

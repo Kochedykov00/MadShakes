@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -11,7 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import javafx.util.Duration;
+
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -21,7 +22,6 @@ import java.net.Socket;
 import static sample.Food.*;
 import static sample.Game.*;
 import static sample.Main.*;
-import static sample.Main.cornersize;
 import static sample.Snake.addBeginSnake;
 import static sample.Snake.deleteSnake;
 
@@ -37,6 +37,11 @@ public class GameController {
     private Scene gameScene;
 
     Food food;
+    Socket socket;
+    int id;
+
+    private Snake snakeFirst;
+    private Snake snakeSecond;
 
 
 
@@ -52,10 +57,13 @@ public class GameController {
         this.gameScene = gameScene;
     }
 
-    public GameController(Pane gameRoot, Scene gameScene, Food food) {
+
+    public GameController(Pane gameRoot, Scene gameScene, Food food, Socket socket, int id) {
         this.gameRoot = gameRoot;
         this.gameScene = gameScene;
         this.food = food;
+        this.socket = socket;
+        this.id = id;
     }
 
 
@@ -63,49 +71,50 @@ public class GameController {
 
     public void startGame() {
 
-            gameRoot.setPrefSize(width * cornersize , height * cornersize);
-            Canvas c = new Canvas(width * cornersize , height * cornersize );
-            GraphicsContext gc = c.getGraphicsContext2D();
-            gameRoot.getChildren().addAll(c);
-            addBeginSnake();
+        gameRoot.setPrefSize(width * cornersize, height * cornersize);
+        Canvas c = new Canvas(width * cornersize, height * cornersize);
+        GraphicsContext gc = c.getGraphicsContext2D();
+        gameRoot.getChildren().addAll(c);
+        addBeginSnake();
 
         //food.moveX(365);
         //food.moveY(365);
 
 
-
-        food.setTranslateY((foodY - 1.5) * cornersize );
-        food.setTranslateX((foodX - 1.5) * cornersize );
+        food.setTranslateY((foodY - 1.5) * cornersize);
+        food.setTranslateX((foodX - 1.5) * cornersize);
 
 
         gameRoot.getChildren().addAll(food);
 
 
-
-
-
-
-            timer = new AnimationTimer() {
+        timer = new AnimationTimer() {
                 long lastTick = 0;
-
-
 
 
                 @Override
                 public void handle(long now) {
                     if (lastTick == 0) {
+
+                        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                        dataOutputStream.writeInt(snakeFirst.getxPos());
+                        dataOutputStream.writeInt(snakeFirst.getyPos());
+
+                        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                        snakeSecond.setxPos(dataInputStream.readInt());
+                        snakeSecond.setyPos(dataInputStream.readInt());
+
                         lastTick = now;
                         tick(gc);
                         check(gameRoot, food);
                     }
 
-                    if (now - lastTick > 1000000000 / speed) {
+
+                    if (now - lastTick > 1000000000 / speed)  {
                         lastTick = now;
                         tick(gc);
                         check(gameRoot, food);
                     }
-
-
 
 
                 }
@@ -117,12 +126,20 @@ public class GameController {
 
             takeControl(gameScene);
 
-        food.animation.play();
-
-        }
+            food.animation.play();
 
 
-    public void gameOver() throws NullPointerException {
+    }
+
+
+
+
+
+
+
+
+
+    public void gameOver() throws NullPointerException{
 
         timer.stop();
         deleteSnake();

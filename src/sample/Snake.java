@@ -8,7 +8,7 @@ import static sample.Main.*;
 
 public class Snake {
 
-    static List<Corner> snake = new ArrayList<>();
+   static List<Corner> snake = new ArrayList<>();
 
 
     public static class Corner {
