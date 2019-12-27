@@ -11,6 +11,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 
 
@@ -22,8 +24,8 @@ import java.net.Socket;
 import static sample.Food.*;
 import static sample.Game.*;
 import static sample.Main.*;
-import static sample.Snake.addBeginSnake;
-import static sample.Snake.deleteSnake;
+import static sample.Snake.takeControl;
+
 
 public class GameController {
 
@@ -39,16 +41,8 @@ public class GameController {
     Food food;
     Socket socket;
     int id;
-
-    private Snake snakeFirst;
-    private Snake snakeSecond;
-
-
-
-
-
-
-
+    Snake snakeFirst;
+    Snake snakeSecond;
 
 
 
@@ -58,12 +52,14 @@ public class GameController {
     }
 
 
-    public GameController(Pane gameRoot, Scene gameScene, Food food, Socket socket, int id) {
+    public GameController(Pane gameRoot, Scene gameScene, Food food, Socket socket, int id, Snake snakeFirst, Snake snakeSecond) {
         this.gameRoot = gameRoot;
         this.gameScene = gameScene;
         this.food = food;
         this.socket = socket;
         this.id = id;
+        this.snakeFirst = snakeFirst;
+        this.snakeSecond = snakeSecond;
     }
 
 
@@ -75,10 +71,7 @@ public class GameController {
         Canvas c = new Canvas(width * cornersize, height * cornersize);
         GraphicsContext gc = c.getGraphicsContext2D();
         gameRoot.getChildren().addAll(c);
-        addBeginSnake();
 
-        //food.moveX(365);
-        //food.moveY(365);
 
 
         food.setTranslateY((foodY - 1.5) * cornersize);
@@ -95,25 +88,49 @@ public class GameController {
                 @Override
                 public void handle(long now) {
                     if (lastTick == 0) {
+                        try {
+                            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                            dataOutputStream.writeInt(snakeFirst.getxPos());
+                            dataOutputStream.writeInt(snakeFirst.getyPos());
 
-                        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-                        dataOutputStream.writeInt(snakeFirst.getxPos());
-                        dataOutputStream.writeInt(snakeFirst.getyPos());
+                            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                            snakeSecond.setxPos(dataInputStream.readInt());
+                            snakeSecond.setyPos(dataInputStream.readInt());
 
-                        DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                        snakeSecond.setxPos(dataInputStream.readInt());
-                        snakeSecond.setyPos(dataInputStream.readInt());
+                            lastTick = now;
 
-                        lastTick = now;
-                        tick(gc);
-                        check(gameRoot, food);
+                            snakeSecond.tick(gc);
+
+
+                            snakeSecond.check(gameRoot, food);
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
                     }
 
 
-                    if (now - lastTick > 1000000000 / speed)  {
-                        lastTick = now;
-                        tick(gc);
-                        check(gameRoot, food);
+                    if (now - lastTick > 1000000000 / speed) {
+                        try {
+                            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+                            dataOutputStream.writeInt(snakeFirst.getxPos());
+                            dataOutputStream.writeInt(snakeFirst.getyPos());
+
+                            DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                            snakeSecond.setxPos(dataInputStream.readInt());
+                            snakeSecond.setyPos(dataInputStream.readInt());
+
+                            lastTick = now;
+                            snakeSecond.tick(gc);
+
+
+                            snakeSecond.check(gameRoot, food);
+
+                        }
+                        catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
 
 
@@ -127,9 +144,9 @@ public class GameController {
             takeControl(gameScene);
 
             food.animation.play();
-
-
     }
+
+
 
 
 
@@ -142,7 +159,8 @@ public class GameController {
     public void gameOver() throws NullPointerException{
 
         timer.stop();
-        deleteSnake();
+        snakeFirst.deleteSnake();
+        snakeSecond.deleteSnake();
         breakFood();
         setStartScene();
 

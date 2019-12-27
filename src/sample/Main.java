@@ -54,7 +54,7 @@ public class Main extends Application {
         GraphicsContext gc = c.getGraphicsContext2D();
 
         TextField ipTextField = new TextField();
-        ipTextField.setText("127.0.0.0");
+        ipTextField.setText("192.168.0.101");
         ipTextField.setTranslateX((float) (width * cornersize / 2) - 45);
         ipTextField.setTranslateY((float) (height * cornersize / 2) + 45);
 
@@ -92,11 +92,16 @@ public class Main extends Application {
         Socket socket = client.connectingWithServer();
         System.out.println(client.getId());
 
+        Snake snake = new Snake(width/2 , height / 2);
+        Snake snake1 = new Snake(15, 15);
+
+
+
         //DataOutputStream dataOutputStream = socket.getOutputStream();
         //dataOutputStream.write(1);
 
 
-        GameController gameController = new GameController(gameRoot, gameScene, food, socket, client.getId());
+        GameController gameController = new GameController(gameRoot, gameScene, food, socket, client.getId(), snake, snake1);
         gameController.startGame();
 
 
