@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
@@ -21,7 +22,9 @@ import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 
 import static sample.Food.*;
 
@@ -61,6 +64,14 @@ public class Main extends Application {
 
         GraphicsContext gc = c.getGraphicsContext2D();
 
+        TextField ipTextField = new TextField();
+        ipTextField.setText("here's ip");
+        ipTextField.setTranslateX((float) (width * cornersize / 2) - 45 );
+        ipTextField.setTranslateY((float) (height * cornersize / 2) + 45 );
+
+        startRoot.getChildren().addAll(ipTextField);
+
+
         Button button = new Button();
         button.setText("START");
         button.setTranslateX((float) width * cornersize / 2);
@@ -69,7 +80,8 @@ public class Main extends Application {
         button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                setGameScene();
+
+                setGameScene(ipTextField.getText());
             }
         });
         startRoot.getChildren().addAll(button);
@@ -77,18 +89,31 @@ public class Main extends Application {
     }
 
 
-    public static void setGameScene() {
+    public static void setGameScene(String ip) {
 
         Pane gameRoot = new Pane();
         Scene gameScene = new Scene(gameRoot, width * cornersize, height * cornersize);
 
         Food food = new Food();
 
+        Client client = new Client(ip);
+        try {
+            Socket socket = client.connectingWithServer();
+            //DataOutputStream dataOutputStream = socket.getOutputStream();
+            //dataOutputStream.write(1);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
 
 
 
         GameController gameController = new GameController(gameRoot, gameScene, food);
         gameController.startGame();
+
 
 
         Button but = new Button();

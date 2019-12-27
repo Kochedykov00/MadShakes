@@ -15,12 +15,12 @@ import static sample.Snake.*;
 
 public class Food extends Pane {
 
-    private int count = 3;
-    private int columns = 3;
+    private int count = 27;
+    private int columns = 9;
     private int offsetX = 0;
-    private int offsetY = 168;
-    private static int width = 84;
-    private static int height = 84;
+    private int offsetY = 100;
+    private static int width = 100;
+    private static int height = 100;
 
 
 
@@ -34,7 +34,7 @@ public class Food extends Pane {
     static int speed = 5;
     static Random rand = new Random();
     private ImageView body;
-    private Image squirrelImage = new Image("sample/img/squirrel.png");
+    private Image squirrelImage = new Image("sample/img/mmm.png");
     Animation animation;
 
     public Food() {
@@ -58,8 +58,8 @@ public class Food extends Pane {
                     continue start;
                 }
             }
-            food.setTranslateY(foodY * 24);
-            food.setTranslateX(foodX * 24);
+            food.setTranslateY((foodY - 1.5) * cornersize);
+            food.setTranslateX((foodX - 1.5) * cornersize);
 
             speed++;
             //root.getChildren().addAll(food);

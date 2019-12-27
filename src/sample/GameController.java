@@ -74,8 +74,8 @@ public class GameController {
 
 
 
-        food.setTranslateY(foodY * 24);
-        food.setTranslateX(foodX * 24);
+        food.setTranslateY((foodY - 1.5) * cornersize );
+        food.setTranslateX((foodX - 1.5) * cornersize );
 
 
         gameRoot.getChildren().addAll(food);
@@ -87,6 +87,7 @@ public class GameController {
 
             timer = new AnimationTimer() {
                 long lastTick = 0;
+
 
 
 

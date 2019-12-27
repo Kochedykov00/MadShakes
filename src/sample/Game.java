@@ -107,11 +107,11 @@ public class Game extends Pane {
 
 
 
-        for (int i = 1; i < snake.size(); i++) {
-            if (snake.get(i).x == snake.get(0).x && snake.get(i).y == snake.get(0).y) {
-                gameOver = true;
-            }
-        }
+        //for (int i = 1; i < snake.size(); i++) {
+          //  if (snake.get(i).x == snake.get(0).x && snake.get(i).y == snake.get(0).y) {
+            //    gameOver = true;
+            //}
+        //}
 
 
 
@@ -125,12 +125,12 @@ public class Game extends Pane {
         gc.fillText("Score: " + (speed - 5), 10, 30);
 
         // random foodcolor
-        //Color cc = Color.PINK;
+        Color cc = Color.PINK;
 
 
 
-        //gc.setFill(cc);
-        //gc.fillOval(foodX * cornersize, foodY * cornersize, cornersize, cornersize);
+        gc.setFill(cc);
+        gc.fillOval(foodX * cornersize, foodY * cornersize, cornersize, cornersize);
 
         // snake
         for (Snake.Corner c : snake) {
